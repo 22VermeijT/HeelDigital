@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const location = useLocation()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -13,15 +14,23 @@ export default function Header() {
 
   const close = () => setMenuOpen(false)
 
+  const handleHomeClick = (e) => {
+    close()
+    if (location.pathname === '/') {
+      e.preventDefault()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   return (
     <header className={`header${scrolled ? ' scrolled' : ''}`}>
       <div className="header-inner">
-        <Link to="/" className="logo" onClick={close}>
-          <img src="/logo.png" alt="Digital Dog" className="logo-img" />
+        <Link to="/" className="logo" onClick={handleHomeClick}>
+          <img src="/HeelDigital.png" alt="Heel Digital" className="logo-img" />
         </Link>
 
         <nav className={`nav${menuOpen ? ' nav-open' : ''}`}>
-          <Link to="/" onClick={close}>Home</Link>
+          <Link to="/" onClick={handleHomeClick}>Home</Link>
           <a href="/#about" onClick={close}>About</a>
           <a href="/#services" onClick={close}>Services</a>
           <a href="/#how-it-works" onClick={close}>How we work</a>

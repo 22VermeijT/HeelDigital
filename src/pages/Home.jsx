@@ -1,43 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { services } from '../data/services'
 import { useReveal } from '../hooks/useReveal'
-
-const cardModals = [
-  {
-    icon: '⭐',
-    title: 'Review Campaign Live',
-    stat: '+42 five-star reviews in 30 days — 3.8 → 4.7 stars',
-    points: [
-      'Reviews are the #1 local ranking factor on Google. A business with 4.7 stars consistently outranks a competitor with 3.8 stars, even if the competitor has been around longer.',
-      'Our system identifies the right moment to ask — right after a job is completed or a service is delivered — and sends a personalized follow-up via SMS or email with a one-tap link directly to your Google review page.',
-      'We filter feedback privately first. Unhappy customers are redirected to an internal form so you can resolve the issue before it becomes a public 1-star review.',
-      'For this client, 42 new reviews in 30 days pushed them from outside the top 10 into the Google Maps top 3 for their city. Inbound calls increased by 60% within six weeks.',
-    ],
-  },
-  {
-    icon: '📈',
-    title: 'Organic Traffic Growth',
-    stat: '↑ 218% organic traffic in 90 days — zero ad spend',
-    points: [
-      'We start with a full keyword audit — identifying every high-intent search term your customers use and mapping them to pages on your site. Most small business websites are invisible to Google simply because the right words are never on the page.',
-      'On-page optimization covers title tags, meta descriptions, heading structure, internal linking, and page speed — all the technical signals Google uses to understand and rank your content.',
-      'Google Business Profile optimization ensures your hours, categories, photos, and service descriptions are complete and keyword-rich, feeding the local algorithm directly.',
-      'For this home services client, those three layers combined drove a 218% increase in organic sessions in 90 days — traffic that now arrives for free, every single month, and compounds over time.',
-    ],
-  },
-  {
-    icon: '🏆',
-    title: '#1 on Google Maps',
-    stat: 'Page 2 → #1 map pack in 60 days',
-    points: [
-      'The Google Maps "local pack" — the three businesses shown at the top of a search result — captures over 40% of all clicks. If you\'re not in it, you\'re invisible to most people searching right now.',
-      'We optimize every signal Google uses to rank local businesses: category selection, service area configuration, photo quality and volume, Q&A responses, and post frequency on the Google Business Profile.',
-      'Citation building means getting your business name, address, and phone number listed consistently across 50+ directories — Yelp, Apple Maps, Bing, and dozens of industry-specific sites. Consistency here is a direct trust signal to Google.',
-      'Paired with a review campaign to build social proof, this client went from page 2 to the #1 map spot in 60 days and held that position. For a search like "plumber near me," that single ranking change was worth thousands in monthly revenue.',
-    ],
-  },
-]
 
 const stats = [
   { value: '500+', label: 'Reviews Generated' },
@@ -64,14 +28,56 @@ const steps = [
   },
 ]
 
+const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ID
+  ? `https://formspree.io/f/${import.meta.env.VITE_FORMSPREE_ID}`
+  : null
+
 export default function Home() {
   useReveal()
-  const [activeModal, setActiveModal] = useState(null)
+  const [formStatus, setFormStatus] = useState('idle') // idle | sending | success | error
+
+  useEffect(() => {
+    if (formStatus !== 'success') return
+    const t = setTimeout(() => setFormStatus('idle'), 4000)
+    return () => clearTimeout(t)
+  }, [formStatus])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!FORMSPREE_ENDPOINT) {
+      setFormStatus('error')
+      return
+    }
+    const form = e.target
+    const data = new FormData(form)
+    setFormStatus('sending')
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' },
+      })
+      if (res.ok) {
+        setFormStatus('success')
+        form.reset()
+      } else {
+        setFormStatus('error')
+      }
+    } catch {
+      setFormStatus('error')
+    }
+  }
 
   return (
     <main>
+        {formStatus === 'success' && (
+          <div className="form-toast" role="alert" aria-live="polite">
+            <span className="form-toast-icon" aria-hidden="true">✓</span>
+            <span>Hey, your message has been sent. We'll be in touch soon.</span>
+          </div>
+        )}
         {/* ── Hero ── */}
-        <section className="hero">
+        <section className="hero hero-centered">
           <div className="hero-glow" aria-hidden="true" />
           <div className="hero-content hero-animate-content">
             <p className="hero-badge">For small businesses that are ready to grow</p>
@@ -87,53 +93,30 @@ export default function Home() {
               <a href="#services" className="btn btn-ghost btn-lg">What we do</a>
             </div>
           </div>
-
-          <div className="hero-visual">
-            <button className="hero-card hc-reviews hero-animate-card-1" onClick={() => setActiveModal(0)}>
-              <div className="hc-stars">⭐⭐⭐⭐⭐</div>
-              <div className="hc-label">Review campaign live</div>
-              <div className="hc-sub">+42 new 5-star reviews this month</div>
-            </button>
-            <button className="hero-card hc-traffic hero-animate-card-2" onClick={() => setActiveModal(1)}>
-              <div className="hc-icon">📈</div>
-              <div className="hc-label">Organic traffic</div>
-              <div className="hc-sub">↑ 218% in 90 days</div>
-            </button>
-            <button className="hero-card hc-rank hero-animate-card-3" onClick={() => setActiveModal(2)}>
-              <div className="hc-icon">🏆</div>
-              <div className="hc-label">#1 on Google Maps</div>
-              <div className="hc-sub">for "plumber near me"</div>
-            </button>
-          </div>
-
-          {activeModal !== null && (
-            <div className="hc-modal-backdrop" onClick={() => setActiveModal(null)}>
-              <div className="hc-modal" onClick={e => e.stopPropagation()}>
-                <button className="hc-modal-close" onClick={() => setActiveModal(null)} aria-label="Close">✕</button>
-                <div className="hc-modal-icon">{cardModals[activeModal].icon}</div>
-                <h3 className="hc-modal-title">{cardModals[activeModal].title}</h3>
-                <p className="hc-modal-stat">{cardModals[activeModal].stat}</p>
-                <ul className="hc-modal-points">
-                  {cardModals[activeModal].points.map((pt, i) => (
-                    <li key={i}>{pt}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
         </section>
 
         {/* ── Who we are ── */}
         <section id="about" className="section who-we-are">
           <div className="container who-we-are-inner">
             <h2 className="section-title" data-reveal>Built for owners, not enterprises</h2>
-            <div className="who-we-are-body" data-reveal style={{ '--reveal-delay': '0.1s' }}>
+            <div className="who-we-are-grid">
+              <div className="who-we-are-visual" data-reveal aria-hidden="true">
+                <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="who-we-are-graphic">
+                  <circle cx="100" cy="100" r="85" stroke="currentColor" strokeWidth="1" opacity="0.15" />
+                  <circle cx="100" cy="100" r="60" stroke="currentColor" strokeWidth="1" opacity="0.2" />
+                  <path d="M55 100c0-25 20-45 45-45s45 20 45 45" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+                  <path d="M100 55v90M70 70l60 60M130 70l-60 60" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.35" />
+                  <circle cx="100" cy="100" r="12" fill="currentColor" opacity="0.4" />
+                </svg>
+              </div>
+              <div className="who-we-are-body" data-reveal style={{ '--reveal-delay': '0.1s' }}>
               <p>
-                Digital Dog is a small team. We work with small businesses — the plumber who’s slammed with work but invisible on Google, the salon that’s great at what they do but terrible at reviews, the shop that’s outgrown its DIY site. You’re not looking for a 20-person agency or a “brand transformation.” You need a site that converts, reviews that build trust, and visibility that brings in leads.
+                Heel Digital is a small team. We work with small businesses — the plumber who’s slammed with work but invisible on Google, the salon that’s great at what they do but terrible at reviews, the shop that’s outgrown its DIY site. You’re not looking for a 20-person agency or a “brand transformation.” You need a site that converts, reviews that build trust, and visibility that brings in leads.
               </p>
               <p>
                 We’re not the cheapest. We’re not the flashiest. We’re the ones who show up, do the work, and tell you in plain English what’s happening. If that sounds like what you’ve been looking for, we should talk.
               </p>
+            </div>
             </div>
           </div>
         </section>
@@ -235,31 +218,35 @@ export default function Home() {
               </p>
               <form
                 className="contact-form"
-                onSubmit={e => {
-                  e.preventDefault()
-                  alert("Thanks! We'll be in touch within 24 hours.")
-                }}
+                onSubmit={handleSubmit}
+                action={FORMSPREE_ENDPOINT || '#'}
+                method="POST"
               >
                 <div className="form-row">
-                  <input type="text" placeholder="Your name" required className="form-input" />
-                  <input type="email" placeholder="Email address" required className="form-input" />
+                  <input type="text" name="firstName" placeholder="First name" required className="form-input" />
+                  <input type="text" name="lastName" placeholder="Last name" required className="form-input" />
                 </div>
-                <input type="text" placeholder="Business name (optional)" className="form-input" />
+                <div className="form-row">
+                  <input type="email" name="email" placeholder="Email" required className="form-input" />
+                  <input type="tel" name="phone" placeholder="Phone number" className="form-input" />
+                </div>
+                <input type="text" name="company" placeholder="Company / business" className="form-input" />
                 <textarea
+                  name="message"
                   placeholder="What are you looking to achieve? (reviews, website, SEO...)"
                   rows={4}
                   className="form-input form-textarea"
                 />
-                <button type="submit" className="btn btn-primary btn-lg btn-full">
-                  Send message — we'll respond within 24h
+                {formStatus === 'error' && (
+                  <p className="form-message form-message-error">
+                    Something went wrong. Please email us directly at{' '}
+                    <a href="mailto:hello@heeldigital.com" className="cta-email">hello@heeldigital.com</a>.
+                  </p>
+                )}
+                <button type="submit" className="btn btn-primary btn-lg btn-full" disabled={formStatus === 'sending'}>
+                  {formStatus === 'sending' ? 'Sending…' : "Send message — we'll respond within 24h"}
                 </button>
               </form>
-              <p className="cta-alt">
-                Prefer email?{' '}
-                <a href="mailto:hello@digitaldog.agency" className="cta-email">
-                  hello@digitaldog.agency
-                </a>
-              </p>
             </div>
           </div>
         </section>

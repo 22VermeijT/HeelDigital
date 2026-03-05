@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer-inner">
         <Link to="/" className="footer-brand">
-          <img src="/logo.png" alt="Digital Dog" className="logo-img logo-img-sm" />
+          <img src="/HeelDigital.png" alt="Heel Digital" className="logo-img logo-img-sm" />
         </Link>
         <nav className="footer-nav">
           <a href="/#about">About</a>
@@ -14,7 +14,7 @@ export default function Footer() {
           <a href="/#how-it-works">How we work</a>
           <a href="/#contact">Contact</a>
         </nav>
-        <p className="footer-copy">© {new Date().getFullYear()} Digital Dog. All rights reserved.</p>
+        <p className="footer-copy">© {new Date().getFullYear()} Heel Digital. All rights reserved.</p>
       </div>
     </footer>
   )
