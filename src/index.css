@@ -1,26 +1,27 @@
 :root {
-  --bg: #0d0d0f;
-  --bg-top: #0f0f12;
-  --surface: #16161a;
-  --surface-hover: #1e1e24;
-  --surface-raised: #1a1a1e;
-  --text: #f4f4f5;
-  --text-muted: #a1a1aa;
-  --accent: #e59409;
-  --accent-soft: rgba(229, 148, 9, 0.12);
-  --border: #27272a;
+  --bg: #ffffff;
+  --bg-top: #eff6ff;
+  --surface: #f8faff;
+  --surface-hover: #edf3ff;
+  --surface-raised: #f0f6ff;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.09);
+  --accent-glow: rgba(37, 99, 235, 0.22);
+  --border: #bfdbfe;
   --radius: 10px;
   --radius-lg: 16px;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 24px rgba(229, 148, 9, 0.15);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.1);
+  --shadow-lg: 0 8px 32px rgba(15, 23, 42, 0.14);
+  --shadow-glow: 0 0 32px rgba(37, 99, 235, 0.22);
 }
 
 * {
   box-sizing: border-box;
   scrollbar-width: thin;
-  scrollbar-color: #2a2a2f var(--bg);
+  scrollbar-color: #bfdbfe var(--bg);
 }
 
 #root {
@@ -37,23 +38,26 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2f;
+  background: #bfdbfe;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3a42;
+  background: #93c5fd;
 }
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--bg);
 }
 
 body {
   margin: 0;
   font-family: 'DM Sans', system-ui, sans-serif;
   background: var(--bg);
-  background-image: radial-gradient(ellipse 120% 80% at 50% -20%, var(--bg-top) 0%, var(--bg) 50%);
+  background-image:
+    radial-gradient(ellipse 55% 35% at 50% -2%, rgba(37, 99, 235, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 120% 80% at 50% -20%, var(--bg-top) 0%, var(--bg) 50%);
   color: var(--text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -64,7 +68,7 @@ body::before {
   position: fixed;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  opacity: 0.06;
+  opacity: 0.018;
   pointer-events: none;
   z-index: 0;
 }
@@ -84,3 +88,102 @@ button {
   font-family: inherit;
   cursor: pointer;
 }
+
+/* ── Screen-reader only utility ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Corner diagonal bar decorations ── */
+.corner-deco {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  width: 640px;
+  height: 640px;
+}
+
+/* Top-left: 3 bars — mirror of top-right, rotated 90deg clockwise */
+.corner-deco-tl {
+  top: 0;
+  left: 0;
+  transform: rotate(90deg);
+  background-image: linear-gradient(
+    45deg,
+    transparent              0px,
+    transparent              28px,
+    rgba(37,99,235,0.07)  28px,
+    rgba(37,99,235,0.07)  90px,
+    transparent              90px,
+    transparent             130px,
+    rgba(37,99,235,0.07) 130px,
+    rgba(37,99,235,0.07) 192px,
+    transparent             192px,
+    transparent             232px,
+    rgba(37,99,235,0.07) 232px,
+    rgba(37,99,235,0.07) 294px,
+    transparent             294px,
+    transparent             640px
+  );
+  mask-image: linear-gradient(
+    315deg,
+    transparent         4%,
+    rgba(0,0,0,0.5)    18%,
+    black              42%,
+    transparent        72%
+  );
+  -webkit-mask-image: linear-gradient(
+    315deg,
+    transparent         4%,
+    rgba(0,0,0,0.5)    18%,
+    black              42%,
+    transparent        72%
+  );
+}
+
+/* Top-right: 3 bars
+   Each bar 62px thick, 40px gaps, 28px initial offset from corner */
+.corner-deco-tr {
+  top: 0;
+  right: 0;
+  background-image: linear-gradient(
+    -45deg,
+    transparent              0px,
+    transparent              28px,
+    rgba(37,99,235,0.07)  28px,
+    rgba(37,99,235,0.07)  90px,
+    transparent              90px,
+    transparent             130px,
+    rgba(37,99,235,0.07) 130px,
+    rgba(37,99,235,0.07) 192px,
+    transparent             192px,
+    transparent             232px,
+    rgba(37,99,235,0.07) 232px,
+    rgba(37,99,235,0.07) 294px,
+    transparent             294px,
+    transparent             640px
+  );
+  mask-image: linear-gradient(
+    225deg,
+    transparent         4%,
+    rgba(0,0,0,0.5)    18%,
+    black              42%,
+    transparent        72%
+  );
+  -webkit-mask-image: linear-gradient(
+    225deg,
+    transparent         4%,
+    rgba(0,0,0,0.5)    18%,
+    black              42%,
+    transparent        72%
+  );
+}
+

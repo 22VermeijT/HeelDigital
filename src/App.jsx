@@ -5,6 +5,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import ServicePage from './pages/ServicePage'
+import NotFound from './pages/NotFound'
 
 const getDepth = p => (p === '/' ? 0 : 1)
 
@@ -39,7 +40,10 @@ function AnimatedRoutes() {
 
   // Runs synchronously before first paint — no vertical movement during animation
   useLayoutEffect(() => {
-    if (dirRef.current === -1) {
+    if (location.state?.scrollToTop) {
+      // Explicit home nav (logo or Home link) — always go to top
+      window.scrollTo(0, 0)
+    } else if (dirRef.current === -1) {
       // Back: restore the exact scroll position the user was at
       window.scrollTo(0, restoreTarget.current)
     } else {
@@ -62,6 +66,7 @@ function AnimatedRoutes() {
           <Routes location={location}>
             <Route path="/" element={<Home />} />
             <Route path="/services/:slug" element={<ServicePage />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </motion.div>
       </AnimatePresence>
@@ -72,6 +77,8 @@ function AnimatedRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
+      <div className="corner-deco corner-deco-tl" aria-hidden="true" />
+      <div className="corner-deco corner-deco-tr" aria-hidden="true" />
       <Header />
       <AnimatedRoutes />
       <Footer />
