@@ -285,9 +285,10 @@ export default function Home() {
             </p>
             <div className="why-grid">
               {[
-                { icon: 'pricing', title: 'Upfront pricing & clear reporting', text: 'You see the number before we start. No scope creep or surprise invoices. Monthly updates in plain English — rankings, traffic, leads, no buzzword bingo.' },
-                { icon: 'contact', title: 'One person, not a team', text: 'You get a real contact. No handoffs, no account managers who never answer.' },
-                { icon: 'fast', title: 'Fast turnaround', text: 'Sites in about 2 weeks. Review campaigns in days. We do not sit on your project.' },
+                { icon: 'pricing',  title: 'Upfront pricing & clear reporting', text: 'You see the number before we start. No scope creep or surprise invoices. Monthly updates in plain English — rankings, traffic, leads, no buzzword bingo.' },
+                { icon: 'contact',  title: 'One person, not a team',            text: 'You get a real contact. No handoffs, no account managers who never answer.' },
+                { icon: 'fast',     title: 'Fast turnaround',                   text: 'Sites in about 2 weeks. Review campaigns in days. We do not sit on your project.' },
+                { icon: 'contract', title: 'No long-term contracts',            text: 'Month to month on everything we do. If we\'re not delivering, you\'re not locked in. Simple as that.' },
               ].map((item, i) => (
                 <div key={i} className="why-item">
                   <div className="why-icon"><ServiceIcon name={item.icon} /></div>

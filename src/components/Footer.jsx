@@ -14,10 +14,7 @@ export default function Footer() {
           <a href="/#how-it-works">How we work</a>
           <a href="/#contact">Contact</a>
         </nav>
-        <div className="footer-copy">
-          <p>Based in Wisconsin · Serving businesses nationwide</p>
-          <p>© {new Date().getFullYear()} Heel Digital. All rights reserved.</p>
-        </div>
+        <p className="footer-copy">© {new Date().getFullYear()} Heel Digital. All rights reserved.</p>
       </div>
     </footer>
   )
